@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+    />
+    <meta name="description" content="a online chip8 and super chip8 emulator made by typescript">
+    <meta name="keywords" content="chip8,super chip8,emulator,typescript">
+    <title>(S)Chip8 Emulator</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+      .canvas-wrap {
+        max-width: 640px;
+        aspect-ratio: 2 / 1;
+        padding: 4px;
+        border-radius: 4px;
+        background-color: #000;
+        margin: 0 auto;
+      }
+      canvas {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+      .desc-wrap {
+        max-width: 640px;
+        margin: 20px auto 28px;
+        user-select: none;
+      }
+      audio {
+        display: none;
+      }
+      body {
+        padding: 50px 0;
+      }
+      .keys-wrap {
+        display: flex;
+      }
+      #keys {
+        max-width: 640px;
+        display: grid;
+        grid-template-rows: repeat(5, 50px);
+        grid-template-columns: repeat(4, 1fr);
+        grid-gap: 4px;
+        text-align: center;
+        margin: 0 auto 10px;
+      }
+      #keys::before {
+        content: 'Keyboard';
+        grid-column-start: 1;
+        grid-column-end: 5;
+        font-size: 16;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #333;
+      }
+      .key-cell {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 4px;
+        border: 1px solid #eee;
+        user-select: none;
+        cursor: pointer;
+        color: #333;
+      }
+      .key-cell sup {
+        margin-left: 2px;
+        color: #666;
+      }
+      .key-cell:hover {
+        background-color: rgba(0, 0, 0, 0.1);
+      }
+      .key-cell:active,
+      .key-cell.active {
+        background-color: rgba(0, 0, 0, 0.2);
+        color: rgba(51, 51, 51, 0.75);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h3>A (S)Chip8 Emulator</h3>
+      <div class="grid">
+        <div>
+          <select id="rom"></select>
+        </div>
+        <button id="start" data-tooltip="Keyboard: Space">START/RELOAD</button>
+        <button id="pause" data-tooltip="Keyboard: P" class="contrast">
+          PAUSE/RESUME
+        </button>
+      </div>
+      <div class="canvas-wrap">
+        <canvas id="gameGrid"></canvas>
+      </div>
+
+      <details class="desc-wrap">
+        <summary>ROM description</summary>
+        <p id="desc">Press <strong>START</strong> to play a game.</p>
+      </details>
+
+      <div id="keys"></div>
+    </div>
+    <audio id="audio" src="/beep.mp3"></audio>
+    <footer class="container">xx</footer>
+    <script type="module" src="/src/entry.ts"></script>
+  </body>
+</html>

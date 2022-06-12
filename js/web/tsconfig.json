@@ -1,0 +1,10 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "chip8_js": ["../src/index.ts"]
+    }
+  },
+  "include": ["src"]
+}
