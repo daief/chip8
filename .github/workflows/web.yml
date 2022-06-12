@@ -29,9 +29,7 @@ jobs:
           cache: "pnpm"
           cache-dependency-path: "js/pnpm-lock.yaml"
 
-      - run: cd js/web
-      - run: pnpm install
-      - run: pnpm build
+      - run: cd js/web && pnpm install && pnpm build
 
       - name: GitHub Pages action
         uses: peaceiris/actions-gh-pages@v3.7.3
