@@ -27,7 +27,7 @@ jobs:
         with:
           node-version: 14.x
           cache: "pnpm"
-          cache-dependency-path: "js/pnpm-lock.ymal"
+          cache-dependency-path: "js/pnpm-lock.yaml"
 
       - run: cd js/web
       - run: pnpm install
