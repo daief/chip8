@@ -1,6 +1,7 @@
 const sc8 = (name: string, ext: string = 'ch8') =>
-  `/roms/schip8/${name}.${ext}`;
-const c8 = (name: string, ext: string = 'ch8') => `/roms/chip8/${name}.${ext}`;
+  `/chip8/roms/schip8/${name}.${ext}`;
+const c8 = (name: string, ext: string = 'ch8') =>
+  `/chip8/roms/chip8/${name}.${ext}`;
 
 const a = (name: string, isC8 = true) =>
   `<a target="target" href="${(isC8 ? sc8 : c8)(name, 'txt')}">${name}.txt</a>`;
@@ -331,6 +332,15 @@ export const roms: IItem[] = [
 
 export async function loadRom(it: IItem) {
   return await fetch(it.sc8 ? sc8(it.name) : c8(it.name))
-    .then((resp) => resp.arrayBuffer())
+    .then((resp) => {
+      if (!resp.ok) {
+        console.warn('Fetch rom error', {
+          item: it,
+          response: resp,
+        });
+        throw new Error('Fetch rom error');
+      }
+      return resp.arrayBuffer();
+    })
     .then((ab) => new Uint8Array(ab));
 }

@@ -2,6 +2,9 @@ import { createChip8 } from 'chip8_js';
 import './roms';
 import '@picocss/pico';
 import { loadRom, roms } from './roms';
+import 'nprogress/nprogress.css';
+// @ts-ignore
+import NProgress from 'nprogress';
 
 const $id = <T extends HTMLElement>(id: string): T =>
   document.getElementById(id) as any as T;
@@ -19,7 +22,7 @@ const canvasCtx = $canvas.getContext('2d')!;
 canvasCtx.fillStyle = '#000';
 canvasCtx.fillRect(0, 0, $canvas.width, $canvas.height);
 
-const keys = $id<HTMLDivElement>('keys');
+const $keys = $id<HTMLDivElement>('keys');
 const $audio = $id<HTMLAudioElement>('audio');
 const $romSelect = $id<HTMLSelectElement>('rom');
 
@@ -33,7 +36,7 @@ $romSelect.innerHTML = roms
 $romSelect.value = '3';
 
 const keyEntries = Object.entries(chip8.keyboard.KEY_MAP);
-keys.innerHTML = keyEntries
+$keys.innerHTML = keyEntries
   .map(
     (it) =>
       `<div class="key-cell" data-key="${it[0]}">
@@ -91,12 +94,12 @@ const run = () => {
 
   const onDown = (e: KeyboardEvent) => {
     if (chip8.keyboard.keyDown(e.key)) {
-      keys.querySelector(`[data-key=${e.key}]`)!.classList.add('active');
+      $keys.querySelector(`[data-key=${e.key}]`)!.classList.add('active');
     }
   };
   const onUp = (e: KeyboardEvent) => {
     if (chip8.keyboard.keyUp(e.key)) {
-      keys.querySelector(`[data-key=${e.key}]`)!.classList.remove('active');
+      $keys.querySelector(`[data-key=${e.key}]`)!.classList.remove('active');
     }
   };
   // bind key event
@@ -116,10 +119,17 @@ const loadAndRun = async () => {
   stop?.();
   const rom = roms[+$romSelect.value];
   $id('desc').innerHTML = rom.desc;
-  const uintRom = await loadRom(rom);
-  chip8.loadRom(uintRom);
-  console.log('load done.');
-  run();
+  try {
+    NProgress.start();
+    const uintRom = await loadRom(rom);
+    chip8.loadRom(uintRom);
+    console.log('load done.');
+    run();
+  } catch (error: any) {
+    alert('Fetch rom error：' + error.response.statusText);
+  } finally {
+    NProgress.done();
+  }
 };
 
 const togglePause = () => {
@@ -149,7 +159,7 @@ window.addEventListener('keydown', (e) => {
 });
 
 ['touchstart', 'mousedown'].forEach((ev) => {
-  keys.addEventListener(ev, (e) => {
+  $keys.addEventListener(ev, (e) => {
     const target = e.target as HTMLDivElement;
     if (!target.classList.contains('key-cell')) return;
     const key = target.dataset.key!;
@@ -158,7 +168,7 @@ window.addEventListener('keydown', (e) => {
 });
 
 ['mouseup', 'touchend', 'touchcancel'].forEach((ev) => {
-  keys.addEventListener(ev, () => {
+  $keys.addEventListener(ev, () => {
     chip8.keyboard.reset();
   });
 });
