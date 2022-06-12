@@ -23,10 +23,11 @@ jobs:
           version: 6.19.1
 
       - name: Use Node.js 14.x
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: 14.x
           cache: "pnpm"
+          cache-dependency-path: "js/pnpm-lock.ymal"
 
       - run: cd js/web
       - run: pnpm install
