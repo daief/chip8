@@ -7,9 +7,13 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, user-scalable=no"
     />
-    <meta name="description" content="a online chip8 and super chip8 emulator made by typescript">
-    <meta name="keywords" content="chip8,super chip8,emulator,typescript">
+    <meta
+      name="description"
+      content="a online chip8 and super chip8 emulator made by typescript"
+    />
+    <meta name="keywords" content="chip8,super chip8,emulator,typescript" />
     <title>(S)Chip8 Emulator</title>
+    <script src="/def-common/js/ga.js"></script>
     <style>
       * {
         margin: 0;
@@ -109,7 +113,13 @@
       <div id="keys"></div>
     </div>
     <audio id="audio" src="/beep.mp3"></audio>
-    <footer class="container">xx</footer>
+    <footer class="container" style="text-align: center">
+      Copyright © <span id="footerYear"></span> by
+      <a href="https://github.com/daief" target="_blank">daief</a>.
+      <a href="https://github.com/daief/chip8" target="_blank">
+        Github Project
+      </a>
+    </footer>
     <script type="module" src="/src/entry.ts"></script>
   </body>
 </html>

@@ -2,6 +2,7 @@ import { defineConfig } from 'vite';
 import path from 'path';
 
 export default defineConfig({
+  base: '/chip8/',
   publicDir: path.resolve(__dirname, '../../assets'),
   resolve: {
     alias: {

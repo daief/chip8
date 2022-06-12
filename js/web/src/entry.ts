@@ -10,6 +10,8 @@ const chip8 = createChip8();
 // @ts-ignore
 window.chip8 = chip8;
 
+$id('footerYear').innerHTML = new Date().getFullYear().toString();
+
 const $canvas = $id<HTMLCanvasElement>('gameGrid');
 $canvas.width = 640;
 $canvas.height = 320;
