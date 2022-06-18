@@ -6,10 +6,7 @@ use chip8_core::vm::Chip8;
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
-extern "C" {
-    #[wasm_bindgen(js_namespace = console)]
-    fn log(s: &str);
-}
+extern "C" {}
 
 #[wasm_bindgen]
 pub struct Emulator {

@@ -53,8 +53,6 @@ $keys.innerHTML = keyEntries
 
 // ------------------------ start main
 
-$romSelect.value = '13';
-
 init($sourceSelect.value === 'wasm').then((chip8) => {
   // @ts-ignore
   window.chip8 = chip8;

@@ -720,10 +720,6 @@ export class CPU {
     return instruction;
   }
 
-  decode(instruction: number) {
-    return new Instruction(instruction);
-  }
-
   decodeAndExecute(ir: number) {
     const irIns = new Instruction(ir);
     const { opcode, x, y, n, kk, nnn } = irIns;

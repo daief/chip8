@@ -627,6 +627,7 @@ mod ops {
      * This means that two bytes will be read from the memory location, and 16 two-byte sequences in total will be read.
      */
     pub fn s8_drw_vx_vy_0(vm: &mut Chip8, ir: &Instruction) {
+        vm.r_v[0xF] = 0;
         let x = ir.x as usize;
         let y = ir.y as usize;
         let vx = vm.r_v[x];
@@ -682,7 +683,7 @@ mod ops {
 
         // 64 * 32
         for yy in 0..nums {
-            let sys_byte = vm.memory[(vm.r_i + yy as u16) as usize];
+            let sys_byte = vm.memory[vm.r_i as usize + yy];
 
             for xx in 0..8 {
                 let x_cord = vx + xx;
@@ -692,7 +693,7 @@ mod ops {
                     let sys_bit = (sys_byte >> (7 - xx)) & 0x1;
                     let xy_bit = vm.screen.get_pixel(x_cord, y_cord) as u8;
 
-                    if xy_bit & sys_bit == 1 {
+                    if (xy_bit & sys_bit) == 1 {
                         vm.r_v[0xF] = 1;
                     }
                     vm.screen.set_pixel(x_cord, y_cord, (xy_bit ^ sys_bit) == 1);
@@ -708,9 +709,8 @@ mod ops {
      * Skip the following instruction if the key represented by the value in VX is pressed.
      */
     pub fn skp_vx(vm: &mut Chip8, ir: &Instruction) {
-        let i = vm.r_v[ir.x as usize] & 0xF;
-        let i = i as usize;
-        if vm.keyboard.keys[i] {
+        let i = vm.r_v[ir.x as usize] as usize;
+        if i < 0xF && vm.keyboard.keys[i] {
             vm.r_pc += 2;
         }
     }
@@ -720,9 +720,8 @@ mod ops {
      * Skip the following instruction if the key represented by the value in VX is not pressed.
      */
     pub fn sknp_vx(vm: &mut Chip8, ir: &Instruction) {
-        let i = vm.r_v[ir.x as usize] & 0xF;
-        let i = i as usize;
-        if !vm.keyboard.keys[i] {
+        let i = vm.r_v[ir.x as usize] as usize;
+        if i < 0xF && !vm.keyboard.keys[i] {
             vm.r_pc += 2;
         }
     }
@@ -747,8 +746,8 @@ mod ops {
                 break;
             }
         }
-        if key_pressed {
-            vm.r_pc += 2;
+        if !key_pressed {
+            vm.r_pc -= 2;
         }
     }
 
