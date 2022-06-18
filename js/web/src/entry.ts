@@ -19,6 +19,14 @@ canvasCtx.fillRect(0, 0, $canvas.width, $canvas.height);
 const $keys = $id<HTMLDivElement>('keys');
 const $audio = $id<HTMLAudioElement>('audio');
 const $romSelect = $id<HTMLSelectElement>('rom');
+const $sourceSelect = $id<HTMLSelectElement>('sourceType');
+
+$sourceSelect.addEventListener('change', (e) => {
+  const el = e.target as HTMLSelectElement;
+  const s = new URLSearchParams(window.location.search);
+  s.set('source', el.value);
+  location.replace(location.href.split('?')[0] + '?' + s.toString());
+});
 
 // ------------------------ initital dom state
 $romSelect.innerHTML = roms
@@ -28,6 +36,9 @@ $romSelect.innerHTML = roms
   )
   .join('');
 $romSelect.value = '3';
+
+$sourceSelect.value =
+  new URLSearchParams(window.location.search).get('source') || 'js';
 
 const keyEntries = Object.entries(KEY_MAP);
 $keys.innerHTML = keyEntries
@@ -42,9 +53,9 @@ $keys.innerHTML = keyEntries
 
 // ------------------------ start main
 
-$romSelect.value = '69';
+$romSelect.value = '13';
 
-init(true).then((chip8) => {
+init($sourceSelect.value === 'wasm').then((chip8) => {
   // @ts-ignore
   window.chip8 = chip8;
   const draw = () => {

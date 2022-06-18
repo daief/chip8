@@ -87,19 +87,33 @@
         background-color: rgba(0, 0, 0, 0.2);
         color: rgba(51, 51, 51, 0.75);
       }
+      .two-cell-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr;
+        grid-column-gap: var(--grid-spacing-horizontal);
+      }
     </style>
   </head>
   <body>
     <div class="container">
       <h3>A (S)Chip8 Emulator</h3>
       <div class="grid">
-        <div>
+        <div class="two-cell-row">
           <select id="rom"></select>
+          <select id="sourceType">
+            <option value="js">JavaScript</option>
+            <option value="wasm">WebAssembly</option>
+          </select>
         </div>
-        <button id="start" data-tooltip="Keyboard: Space">START/RELOAD</button>
-        <button id="pause" data-tooltip="Keyboard: P" class="contrast">
-          PAUSE/RESUME
-        </button>
+        <div class="two-cell-row">
+          <button id="start" data-tooltip="Keyboard: Space">
+            START/RELOAD
+          </button>
+          <button id="pause" data-tooltip="Keyboard: P" class="contrast">
+            PAUSE/RESUME
+          </button>
+        </div>
       </div>
       <div class="canvas-wrap">
         <canvas id="gameGrid"></canvas>

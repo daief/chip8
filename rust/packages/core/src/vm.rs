@@ -308,7 +308,7 @@ mod ops {
      * Scroll display N lines down.
      */
     pub fn s8_scd_n(vm: &mut Chip8, ir: &Instruction) {
-        for y in vm.screen.rows - 1..ir.n.wrapping_sub(1) {
+        for y in (ir.n..=vm.screen.rows - 1).rev() {
             for x in 0..vm.screen.columns {
                 vm.screen.set_pixel(x, y, vm.screen.get_pixel(x, y - ir.n));
             }
@@ -371,6 +371,7 @@ mod ops {
                 }
             }
         }
+        vm.draw_flag = true;
     }
 
     /**
