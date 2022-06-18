@@ -29,6 +29,9 @@ jobs:
           cache: "pnpm"
           cache-dependency-path: "js/pnpm-lock.yaml"
 
+      - run: cargo install wasm-pack
+      - run: cd rust/packages/wasm && wasm-pack build -t web
+
       - run: cd js/web && pnpm install && pnpm build
 
       - name: GitHub Pages action

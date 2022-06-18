@@ -53,133 +53,141 @@ $keys.innerHTML = keyEntries
 
 // ------------------------ start main
 
-init($sourceSelect.value === 'wasm').then((chip8) => {
-  // @ts-ignore
-  window.chip8 = chip8;
-  const draw = () => {
-    if (!chip8.isDrawFlag()) return;
-    chip8.setDrawFlag(false);
-    const cellSize = {
-      w: $canvas.width / chip8.columns(),
-      h: $canvas.height / chip8.rows(),
-    };
+NProgress.start();
+init($sourceSelect.value === 'wasm')
+  .then((chip8) => {
+    // @ts-ignore
+    window.chip8 = chip8;
+    const draw = () => {
+      if (!chip8.isDrawFlag()) return;
+      chip8.setDrawFlag(false);
+      const cellSize = {
+        w: $canvas.width / chip8.columns(),
+        h: $canvas.height / chip8.rows(),
+      };
 
-    if (!chip8.highRes()) {
-      cellSize.w *= 2;
-      cellSize.h *= 2;
-    }
-
-    canvasCtx.clearRect(0, 0, $canvas.width, $canvas.height);
-    for (let y = 0; y < chip8.rows(); y++) {
-      for (let x = 0; x < chip8.columns(); x++) {
-        canvasCtx.fillStyle = chip8.getPixel(x, y) ? '#6cf' : '#000';
-        canvasCtx.fillRect(
-          x * cellSize.w,
-          y * cellSize.h,
-          cellSize.w,
-          cellSize.h
-        );
-      }
-    }
-  };
-
-  let stop: VoidFunction;
-  const run = () => {
-    stop?.();
-
-    let t2 = requestAnimationFrame(function loop(t) {
-      let count = 16 / (1000 / chip8.rate());
-      while (count > 0) {
-        chip8.cycle();
-        count--;
+      if (!chip8.highRes()) {
+        cellSize.w *= 2;
+        cellSize.h *= 2;
       }
 
-      chip8.ticker();
-      if (chip8.soundTimer()) $audio.play();
-      draw();
-      t2 = requestAnimationFrame(loop);
-    });
-
-    const onDown = (e: KeyboardEvent) => {
-      if (chip8.keyDown(e.key)) {
-        $keys.querySelector(`[data-key=k_${e.key}]`)!.classList.add('active');
+      canvasCtx.clearRect(0, 0, $canvas.width, $canvas.height);
+      for (let y = 0; y < chip8.rows(); y++) {
+        for (let x = 0; x < chip8.columns(); x++) {
+          canvasCtx.fillStyle = chip8.getPixel(x, y) ? '#6cf' : '#000';
+          canvasCtx.fillRect(
+            x * cellSize.w,
+            y * cellSize.h,
+            cellSize.w,
+            cellSize.h
+          );
+        }
       }
     };
-    const onUp = (e: KeyboardEvent) => {
-      if (chip8.keyUp(e.key)) {
-        $keys
-          .querySelector(`[data-key=k_${e.key}]`)!
-          .classList.remove('active');
-      }
-    };
-    // bind key event
-    window.addEventListener('keydown', onDown);
-    window.addEventListener('keyup', onUp);
 
-    stop = () => {
-      cancelAnimationFrame(t2);
-      window.removeEventListener('keydown', onDown);
-      window.removeEventListener('keyup', onUp);
-    };
-  };
-
-  const loadAndRun = async () => {
-    canvasCtx.clearRect(0, 0, $canvas.width, $canvas.height);
-    chip8.reset();
-    stop?.();
-    const rom = roms[+$romSelect.value];
-    $id('desc').innerHTML = rom.desc;
-    try {
-      NProgress.start();
-      const uintRom = await loadRom(rom);
-      chip8.loadRom(uintRom);
-      console.log('load done.');
-      run();
-    } catch (error: any) {
-      alert('Fetch rom error：' + error.response.statusText);
-    } finally {
-      NProgress.done();
-    }
-  };
-
-  const togglePause = () => {
-    if (!chip8.toggleRunning()) {
+    let stop: VoidFunction;
+    const run = () => {
       stop?.();
-    } else {
-      run();
-    }
-  };
 
-  // --------------- addEventListener
+      let t2 = requestAnimationFrame(function loop(t) {
+        let count = 16 / (1000 / chip8.rate());
+        while (count > 0) {
+          chip8.cycle();
+          count--;
+        }
 
-  $id<HTMLButtonElement>('start').addEventListener('click', loadAndRun);
+        chip8.ticker();
+        if (chip8.soundTimer()) $audio.play();
+        draw();
+        t2 = requestAnimationFrame(loop);
+      });
 
-  $id('pause').addEventListener('click', togglePause);
+      const onDown = (e: KeyboardEvent) => {
+        if (chip8.keyDown(e.key)) {
+          $keys.querySelector(`[data-key=k_${e.key}]`)!.classList.add('active');
+        }
+      };
+      const onUp = (e: KeyboardEvent) => {
+        if (chip8.keyUp(e.key)) {
+          $keys
+            .querySelector(`[data-key=k_${e.key}]`)!
+            .classList.remove('active');
+        }
+      };
+      // bind key event
+      window.addEventListener('keydown', onDown);
+      window.addEventListener('keyup', onUp);
 
-  $romSelect.addEventListener('keydown', (e) => e.preventDefault());
+      stop = () => {
+        cancelAnimationFrame(t2);
+        window.removeEventListener('keydown', onDown);
+        window.removeEventListener('keyup', onUp);
+      };
+    };
 
-  window.addEventListener('keydown', (e) => {
-    switch (e.code) {
-      case 'Space':
-        e.preventDefault();
-        return loadAndRun();
-      case 'KeyP':
-        return togglePause();
-    }
-  });
+    const loadAndRun = async () => {
+      canvasCtx.clearRect(0, 0, $canvas.width, $canvas.height);
+      chip8.reset();
+      stop?.();
+      const rom = roms[+$romSelect.value];
+      $id('desc').innerHTML = rom.desc;
+      try {
+        NProgress.start();
+        const uintRom = await loadRom(rom);
+        chip8.loadRom(uintRom);
+        console.log('load done.');
+        run();
+      } catch (error: any) {
+        alert('Fetch rom error：' + error.response.statusText);
+      } finally {
+        NProgress.done();
+      }
+    };
 
-  ['touchstart', 'mousedown'].forEach((ev) => {
-    $keys.addEventListener(ev, (e) => {
-      const target = e.target as HTMLDivElement;
-      if (!target.classList.contains('key-cell')) return;
-      const key = target.dataset.key!;
-      chip8.keyDown(key);
+    const togglePause = () => {
+      if (!chip8.toggleRunning()) {
+        stop?.();
+      } else {
+        run();
+      }
+    };
+
+    // --------------- addEventListener
+
+    $id<HTMLButtonElement>('start').addEventListener('click', loadAndRun);
+
+    $id('pause').addEventListener('click', togglePause);
+
+    $romSelect.addEventListener('keydown', (e) => e.preventDefault());
+
+    window.addEventListener('keydown', (e) => {
+      switch (e.code) {
+        case 'Space':
+          e.preventDefault();
+          return loadAndRun();
+        case 'KeyP':
+          return togglePause();
+      }
     });
-  });
 
-  ['mouseup', 'touchend', 'touchcancel'].forEach((ev) => {
-    $keys.addEventListener(ev, () => {
-      chip8.resetKeys();
+    ['touchstart', 'mousedown'].forEach((ev) => {
+      $keys.addEventListener(ev, (e) => {
+        const target = e.target as HTMLDivElement;
+        if (!target.classList.contains('key-cell')) return;
+        const key = target.dataset.key!;
+        chip8.keyDown(key);
+      });
     });
+
+    ['mouseup', 'touchend', 'touchcancel'].forEach((ev) => {
+      $keys.addEventListener(ev, () => {
+        chip8.resetKeys();
+      });
+    });
+  })
+  .catch((err) => {
+    alert('Program error：' + err.message);
+  })
+  .finally(() => {
+    NProgress.done();
   });
-});
