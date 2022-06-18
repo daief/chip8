@@ -176,13 +176,6 @@ export class CPU {
         this.#register_PC = this.#stack.pop()!;
       },
       /**
-       * 00FA
-       * Non-standard. Toggles changing of the I register by save (FX55) and restore (FX65) opcodes.
-       */
-      COMPAT: () => {
-        console.warn('[COMPAT]', 'Not implemented');
-      },
-      /**
        * 00FB
        * Scroll display 4 pixels to the right.
        */
@@ -434,7 +427,7 @@ export class CPU {
        * Sprites in this mode are assumed to be 16x16 pixels.
        * This means that two bytes will be read from the memory location, and 16 two-byte sequences in total will be read.
        */
-      S8_DRW_VX_VX_0: () => {
+      S8_DRW_VX_VY_0: () => {
         this.#register_V[0xf] = 0;
         const vx = this.#register_V[x];
         const vy = this.#register_V[y];
@@ -661,7 +654,7 @@ export class CPU {
        */
       LD_VX_R: () => {
         for (let i = 0; i <= x; i++) {
-          this.#register_V[i] = this.#register_V[i];
+          this.#register_V[i] = this.#register_Rpl[i];
         }
       },
     };
@@ -745,7 +738,6 @@ export class CPU {
         choice(kk, {
           0x00e0: ops.CLS,
           0x00ee: ops.RET,
-          0x00fa: ops.COMPAT,
           0x00fb: ops.S8_SCR,
           0x00fc: ops.S8_SCL,
           0x00fd: ops.S8_EXIT,
@@ -777,7 +769,7 @@ export class CPU {
       0xb000: ops.JP_V0_NNN,
       0xc000: ops.RND_VX_NN,
       0xd000: () =>
-        this.c8.highRes && n === 0 ? ops.S8_DRW_VX_VX_0() : ops.DRW_VX_VX_N(),
+        this.c8.highRes && n === 0 ? ops.S8_DRW_VX_VY_0() : ops.DRW_VX_VX_N(),
       0xe000: () =>
         choice(kk, {
           0x009e: ops.SKP_VX,

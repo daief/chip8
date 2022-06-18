@@ -1,0 +1,13 @@
+[package]
+name = "chip8_wasm"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+chip8_core = { path = "../core" }
+wasm-bindgen = "0.2.81"
+getrandom = { features = ["js"] }
+# serde = { version = "1.0.80", features = ["derive", "rc"] }

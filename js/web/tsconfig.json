@@ -1,9 +1,12 @@
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "node",
     "baseUrl": ".",
     "paths": {
-      "chip8_js": ["../src/index.ts"]
+      "chip8_js": ["../src/index.ts"],
+      "chip8_rust": ["../../rust/pkg"]
     }
   },
   "include": ["src"]

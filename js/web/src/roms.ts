@@ -328,6 +328,14 @@ export const roms: IItem[] = [
     name: 'TEST/X-MIRROR',
     desc: 'Draws symmetric patterns using 2 4 6 8.',
   },
+  {
+    name: 'TEST/test_bc',
+    desc: '',
+  },
+  {
+    name: 'TEST/test_opcode',
+    desc: '',
+  },
 ];
 
 export async function loadRom(it: IItem) {

@@ -17,11 +17,13 @@ importers:
   web:
     specifiers:
       '@picocss/pico': ^1.5.2
+      chip8_rust: ../../rust/packages/wasm/pkg
       nprogress: ^0.2.0
       typescript: ^4.7.3
       vite: ^2.9.10
     dependencies:
       '@picocss/pico': 1.5.2
+      chip8_rust: link:../../rust/packages/wasm/pkg
       nprogress: 0.2.0
     devDependencies:
       typescript: 4.7.3
