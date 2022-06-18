@@ -174,7 +174,7 @@ init($sourceSelect.value === 'wasm')
       $keys.addEventListener(ev, (e) => {
         const target = e.target as HTMLDivElement;
         if (!target.classList.contains('key-cell')) return;
-        const key = target.dataset.key!;
+        const key = target.dataset.key!.replace('k_', '');
         chip8.keyDown(key);
       });
     });
