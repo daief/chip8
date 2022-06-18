@@ -44,7 +44,7 @@ const keyEntries = Object.entries(KEY_MAP);
 $keys.innerHTML = keyEntries
   .map(
     (it) =>
-      `<div class="key-cell" data-key="${it[0]}">
+      `<div class="key-cell" data-key="k_${it[0]}">
         ${it[1].toString(16).toUpperCase()}
         <sup>${it[0].toUpperCase()}</sup>
       </div>`
@@ -102,12 +102,14 @@ init($sourceSelect.value === 'wasm').then((chip8) => {
 
     const onDown = (e: KeyboardEvent) => {
       if (chip8.keyDown(e.key)) {
-        $keys.querySelector(`[data-key=${e.key}]`)!.classList.add('active');
+        $keys.querySelector(`[data-key=k_${e.key}]`)!.classList.add('active');
       }
     };
     const onUp = (e: KeyboardEvent) => {
       if (chip8.keyUp(e.key)) {
-        $keys.querySelector(`[data-key=${e.key}]`)!.classList.remove('active');
+        $keys
+          .querySelector(`[data-key=k_${e.key}]`)!
+          .classList.remove('active');
       }
     };
     // bind key event
