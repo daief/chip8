@@ -310,8 +310,7 @@ mod ops {
     pub fn s8_scd_n(vm: &mut Chip8, ir: &Instruction) {
         for y in vm.screen.rows - 1..ir.n.wrapping_sub(1) {
             for x in 0..vm.screen.columns {
-                vm.screen
-                    .set_pixel(x, y, vm.screen.get_pixel(x, y - ir.n as u8));
+                vm.screen.set_pixel(x, y, vm.screen.get_pixel(x, y - ir.n));
             }
         }
         for y in 0..ir.n {
@@ -337,7 +336,7 @@ mod ops {
      */
     pub fn ret(vm: &mut Chip8) {
         if let Some(res) = vm.stack.pop() {
-            vm.r_pc = res as u16;
+            vm.r_pc = res;
         }
     }
 
@@ -364,11 +363,12 @@ mod ops {
      */
     pub fn s8_scl(vm: &mut Chip8) {
         for y in 0..vm.screen.rows {
-            for x in 0..vm.screen.columns - 4 {
-                vm.screen.set_pixel(x, y, vm.screen.get_pixel(x + 4, y));
-            }
-            for x in 0..4 {
-                vm.screen.set_pixel(x, y, false);
+            for x in 0..vm.screen.columns {
+                if x < vm.screen.columns - 4 {
+                    vm.screen.set_pixel(x, y, vm.screen.get_pixel(x + 4, y));
+                } else {
+                    vm.screen.set_pixel(x, y, false);
+                }
             }
         }
     }
@@ -404,7 +404,7 @@ mod ops {
      * It is ignored by modern interpreters.
      */
     pub fn call_nnn(vm: &mut Chip8) {
-        vm.r_pc = vm.r_pc.wrapping_add(2);
+        vm.r_pc = (vm.r_pc + 2) & 0xfff;
     }
 
     /**
@@ -433,7 +433,7 @@ mod ops {
      */
     pub fn se_vx_nn(vm: &mut Chip8, ir: &Instruction) {
         if vm.r_v[ir.x as usize] == ir.kk {
-            vm.r_pc = vm.r_pc.wrapping_add(2);
+            vm.r_pc += 2;
         }
     }
 
@@ -443,7 +443,7 @@ mod ops {
      */
     pub fn sne_vx_nn(vm: &mut Chip8, ir: &Instruction) {
         if vm.r_v[ir.x as usize] != ir.kk {
-            vm.r_pc = vm.r_pc.wrapping_add(2);
+            vm.r_pc += 2;
         }
     }
 
@@ -453,7 +453,7 @@ mod ops {
      */
     pub fn se_vx_vy(vm: &mut Chip8, ir: &Instruction) {
         if vm.r_v[ir.x as usize] == vm.r_v[ir.y as usize] {
-            vm.r_pc = vm.r_pc.wrapping_add(2);
+            vm.r_pc += 2;
         }
     }
 
@@ -575,8 +575,10 @@ mod ops {
      * but functional due to how the 8XXX instructions were implemented on teh COSMAC VIP.
      */
     pub fn shl_vx_vy(vm: &mut Chip8, ir: &Instruction) {
-        vm.r_v[0xF] = (vm.r_v[ir.x as usize] >> 7) & 0x1;
-        vm.r_v[ir.x as usize] <<= 1;
+        let x = ir.x as usize;
+        vm.r_v[0xF] = (vm.r_v[x] >> 7) & 0x1;
+        vm.r_v[x] <<= 1;
+        vm.r_v[x] &= 0xFF;
     }
 
     /**
@@ -705,7 +707,9 @@ mod ops {
      * Skip the following instruction if the key represented by the value in VX is pressed.
      */
     pub fn skp_vx(vm: &mut Chip8, ir: &Instruction) {
-        if vm.keyboard.keys[vm.r_v[ir.x as usize] as usize] {
+        let i = vm.r_v[ir.x as usize] & 0xF;
+        let i = i as usize;
+        if vm.keyboard.keys[i] {
             vm.r_pc += 2;
         }
     }
@@ -715,7 +719,9 @@ mod ops {
      * Skip the following instruction if the key represented by the value in VX is not pressed.
      */
     pub fn sknp_vx(vm: &mut Chip8, ir: &Instruction) {
-        if !vm.keyboard.keys[vm.r_v[ir.x as usize] as usize] {
+        let i = vm.r_v[ir.x as usize] & 0xF;
+        let i = i as usize;
+        if !vm.keyboard.keys[i] {
             vm.r_pc += 2;
         }
     }
@@ -770,6 +776,7 @@ mod ops {
         let i = vm.r_i;
         let i_plus_vx = i + vx as u16;
         vm.r_v[0xF] = if i_plus_vx > 0x0FFF { 1 } else { 0 };
+        vm.r_i = i_plus_vx & 0x0FFF;
     }
 
     /**
@@ -777,7 +784,7 @@ mod ops {
      * Set I to the address of the CHIP-8 8x5 font sprite representing the value in VX.
      */
     pub fn ld_i_font_vx(vm: &mut Chip8, ir: &Instruction) {
-        vm.r_i = ir.x as u16 * 5;
+        vm.r_i = vm.r_v[ir.x as usize] as u16 * 5;
     }
 
     /**
@@ -785,7 +792,7 @@ mod ops {
      * Set I to the address of the SCHIP-8 16x10 font sprite representing the value in VX.
      */
     pub fn s8_ld_i_font_vx(vm: &mut Chip8, ir: &Instruction) {
-        let val = ir.x as u16 * 10;
+        let val = vm.r_v[ir.x as usize] as u16 * 10;
         vm.r_i = (LARGE_FONT_BASE + val) & 0x0FFF;
     }
 
