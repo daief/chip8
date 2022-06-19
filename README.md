@@ -1,5 +1,11 @@
 # (s)chip8 Emulator
 
+本项目的目标：
+
+- 了解模拟器的编写，实现了一个 Chip8 模拟器（同时兼容 Spuer Chip8 的指令）
+- 分别用 TypeScript 和 Rust 分别实现了一遍，简单学习 Rust
+- 通过 Rust 编译 WebAssembly，学习 WebAssembly 的使用
+
 资料：
 
 - [CHIP-8 - wiki](https://en.wikipedia.org/wiki/CHIP-8)
