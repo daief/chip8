@@ -30,15 +30,11 @@ $sourceSelect.addEventListener('change', (e) => {
 
 // ------------------------ initital dom state
 $romSelect.innerHTML = roms
-  .map(
-    (it, i) =>
-      `<option value="${i}">${it.name}${it.sc8 ? '(SC8)' : ''}</option>`
-  )
+  .map((it, i) => `<option value="${i}">${it.name}${it.sc8 ? '(SC8)' : ''}</option>`)
   .join('');
 $romSelect.value = '3';
 
-$sourceSelect.value =
-  new URLSearchParams(window.location.search).get('source') || 'js';
+$sourceSelect.value = new URLSearchParams(window.location.search).get('source') || 'js';
 
 const keyEntries = Object.entries(KEY_MAP);
 $keys.innerHTML = keyEntries
@@ -75,12 +71,7 @@ init($sourceSelect.value === 'wasm')
       for (let y = 0; y < chip8.rows(); y++) {
         for (let x = 0; x < chip8.columns(); x++) {
           canvasCtx.fillStyle = chip8.getPixel(x, y) ? '#6cf' : '#000';
-          canvasCtx.fillRect(
-            x * cellSize.w,
-            y * cellSize.h,
-            cellSize.w,
-            cellSize.h
-          );
+          canvasCtx.fillRect(x * cellSize.w, y * cellSize.h, cellSize.w, cellSize.h);
         }
       }
     };
@@ -109,9 +100,7 @@ init($sourceSelect.value === 'wasm')
       };
       const onUp = (e: KeyboardEvent) => {
         if (chip8.keyUp(e.key)) {
-          $keys
-            .querySelector(`[data-key=k_${e.key}]`)!
-            .classList.remove('active');
+          $keys.querySelector(`[data-key=k_${e.key}]`)!.classList.remove('active');
         }
       };
       // bind key event
