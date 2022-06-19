@@ -1,9 +1,11 @@
 # (s)chip8 Emulator
 
+> CHIP-8 是一种解释型编程语言，由 Joseph Weisbecker 开发。它最初用于 COSMAC VIP 和 Telmac 1800 8 位微型计算机在 70 年代中期。CHIP-8 程序在一个 CHIP-8 虚拟机上运行。它的问世是为了让电子游戏更容易为这些电脑编程。CHIP-8 的简单性，以及它悠久的历史和流行程度，确保了 CHIP-8 模拟器和程序直到今天仍在生产。
+
 本项目的目标：
 
 - 了解模拟器的编写，实现了一个 Chip8 模拟器（同时兼容 Spuer Chip8 的指令）
-- 分别用 TypeScript 和 Rust 分别实现了一遍，简单学习 Rust
+- 分别用 TypeScript 和 Rust 实现了一遍，用熟悉的 TypeScript 先学会 Chip8 的实现，再用 Rust 练练手
 - 通过 Rust 编译 WebAssembly，学习 WebAssembly 的使用
 
 资料：
